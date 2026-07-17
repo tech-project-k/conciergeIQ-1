@@ -168,8 +168,12 @@ public class ChatOrchestratorService {
             long days = planDays;
             
             if (activeTrip != null) {
-                // Delete old activities
-                activityRepository.deleteByTripId(activeTrip.getId());
+                // Safely clear collection to avoid dereferencing cascade orphan exception
+                if (activeTrip.getActivities() != null) {
+                    activeTrip.getActivities().clear();
+                } else {
+                    activeTrip.setActivities(new ArrayList<>());
+                }
                 activeTrip.setDestination(destination);
                 activeTrip.setStartDate(start);
                 activeTrip.setEndDate(end);
@@ -181,14 +185,16 @@ public class ChatOrchestratorService {
                     .startDate(start)
                     .endDate(end)
                     .status("planning")
+                    .activities(new ArrayList<>())
                     .build();
                 activeTrip = tripRepository.save(activeTrip);
             }
             
             // Build activities
-            activities = generateItinerary(activeTrip, (int) days, destination, localEvents, budgetTier);
-            activityRepository.saveAll(activities);
-            activeTrip.setActivities(activities);
+            List<Activity> newActs = generateItinerary(activeTrip, (int) days, destination, localEvents, budgetTier);
+            activeTrip.getActivities().addAll(newActs);
+            activeTrip = tripRepository.save(activeTrip);
+            activities = activeTrip.getActivities();
             
             responseText = "I've drafted a personalized " + planDays + "-day " + budgetTier.toUpperCase() + " budget itinerary for your trip to " + destination + "! I searched local event reviews in OpenSearch and automatically booked your tickets and temple/event reservations via OpenClaw.";
             
@@ -198,10 +204,16 @@ public class ChatOrchestratorService {
             
             // If the query was specifically asking for a cheaper or luxury change, re-generate matching budget
             if (cleanQuery.contains("cheap") || cleanQuery.contains("luxury") || cleanQuery.contains("cheaper")) {
-                activityRepository.deleteByTripId(activeTrip.getId());
+                if (activeTrip.getActivities() != null) {
+                    activeTrip.getActivities().clear();
+                } else {
+                    activeTrip.setActivities(new ArrayList<>());
+                }
                 long days = ChronoUnit.DAYS.between(activeTrip.getStartDate(), activeTrip.getEndDate()) + 1;
-                activities = generateItinerary(activeTrip, (int) days, destination, localEvents, budgetTier);
-                activityRepository.saveAll(activities);
+                List<Activity> newActs = generateItinerary(activeTrip, (int) days, destination, localEvents, budgetTier);
+                activeTrip.getActivities().addAll(newActs);
+                activeTrip = tripRepository.save(activeTrip);
+                activities = activeTrip.getActivities();
                 responseText = "I've modified your entire itinerary to fit a " + budgetTier.toUpperCase() + " budget. The hotels and dining venues have been upgraded or scaled down accordingly.";
             } else {
                 if (cleanQuery.contains("dinner") && (cleanQuery.contains("move") || cleanQuery.contains("tomorrow"))) {
