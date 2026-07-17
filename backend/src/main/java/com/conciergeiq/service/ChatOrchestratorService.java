@@ -58,11 +58,44 @@ public class ChatOrchestratorService {
         Map<String, Object> response = new HashMap<>();
         List<String> warnings = new ArrayList<>();
         
+        // Load preference
+        Preference pref = guest.getPreference();
+        if (pref == null) {
+            pref = Preference.builder()
+                .guest(guest)
+                .travelStyle("{\"adventure\":3,\"nature\":3,\"luxury\":3}")
+                .dietaryRestrictions("")
+                .accessibilityNeeds("")
+                .budgetTier("moderate")
+                .build();
+            pref = preferenceRepository.save(pref);
+            guest.setPreference(pref);
+        }
+        
+        // Detect and update budget preference dynamically from chat query
+        String budgetTier = pref.getBudgetTier();
+        if (cleanQuery.contains("cheap") || cleanQuery.contains("budget") || cleanQuery.contains("economical") || cleanQuery.contains("low cost") || cleanQuery.contains("cheaper")) {
+            budgetTier = "budget";
+            pref.setBudgetTier("budget");
+            preferenceRepository.save(pref);
+            warnings.add("Budget tier switched to BUDGET. Searching local economic stays and budget eats.");
+        } else if (cleanQuery.contains("luxury") || cleanQuery.contains("premium") || cleanQuery.contains("expensive") || cleanQuery.contains("5 star") || cleanQuery.contains("expensive")) {
+            budgetTier = "luxury";
+            pref.setBudgetTier("luxury");
+            preferenceRepository.save(pref);
+            warnings.add("Budget tier switched to LUXURY. Booking premium resorts and high-end dining.");
+        } else if (cleanQuery.contains("moderate") || cleanQuery.contains("midrange") || cleanQuery.contains("standard")) {
+            budgetTier = "moderate";
+            pref.setBudgetTier("moderate");
+            preferenceRepository.save(pref);
+            warnings.add("Budget tier switched to MODERATE.");
+        }
+        
         // Detect Intent
         String intent = "chat";
         if (cleanQuery.contains("plan") || cleanQuery.contains("trip") || cleanQuery.contains("visit") || cleanQuery.contains("travel")) {
             intent = "plan";
-        } else if (cleanQuery.contains("change") || cleanQuery.contains("move") || cleanQuery.contains("replace") || cleanQuery.contains("add") || cleanQuery.contains("avoid")) {
+        } else if (cleanQuery.contains("change") || cleanQuery.contains("move") || cleanQuery.contains("replace") || cleanQuery.contains("add") || cleanQuery.contains("avoid") || cleanQuery.contains("budget") || cleanQuery.contains("cheap") || cleanQuery.contains("luxury")) {
             intent = "modify";
         }
         
@@ -135,31 +168,39 @@ public class ChatOrchestratorService {
             }
             
             // Build activities
-            activities = generateItinerary(activeTrip, (int) days, destination, localEvents);
+            activities = generateItinerary(activeTrip, (int) days, destination, localEvents, budgetTier);
             activityRepository.saveAll(activities);
             activeTrip.setActivities(activities);
             
-            responseText = "I've drafted a personalized guest itinerary for your trip to " + destination + "! I searched local event reviews in OpenSearch and scheduled activities like " + (localEvents.isEmpty() ? "sightseeing" : localEvents.get(0).get("name")) + ". Let me know if you would like me to modify anything.";
+            responseText = "I've drafted a personalized " + budgetTier.toUpperCase() + " budget itinerary for your trip to " + destination + "! I searched local event reviews in OpenSearch and scheduled activities matching your preferences. Let me know if you would like me to modify anything.";
             
         } else if (intent.equals("modify") && activeTrip != null) {
-            // Modify itinerary
+            // Re-generate or modify current activities to reflect new budget tier or changes
             activities = activityRepository.findByTripIdOrderByDayNumberAscStartTimeAsc(activeTrip.getId());
             
-            if (cleanQuery.contains("dinner") && (cleanQuery.contains("move") || cleanQuery.contains("tomorrow"))) {
-                // Move dinner to next day
-                for (Activity act : activities) {
-                    if (act.getType().equals("dinner") && act.getDayNumber() == 1) {
-                        act.setDayNumber(2);
-                        act.setStartTime("20:00");
-                        act.setEndTime("22:00");
-                        act.setDescription("[Modified] Moved dinner to day 2");
-                        warnings.add("Dinner moved to Day 2. Please double check conflict reservations.");
-                    }
-                }
+            // If the query was specifically asking for a cheaper or luxury change, re-generate matching budget
+            if (cleanQuery.contains("cheap") || cleanQuery.contains("luxury") || cleanQuery.contains("cheaper")) {
+                activityRepository.deleteByTripId(activeTrip.getId());
+                long days = ChronoUnit.DAYS.between(activeTrip.getStartDate(), activeTrip.getEndDate()) + 1;
+                activities = generateItinerary(activeTrip, (int) days, destination, localEvents, budgetTier);
                 activityRepository.saveAll(activities);
+                responseText = "I've modified your entire itinerary to fit a " + budgetTier.toUpperCase() + " budget. The hotels and dining venues have been upgraded or scaled down accordingly.";
+            } else {
+                if (cleanQuery.contains("dinner") && (cleanQuery.contains("move") || cleanQuery.contains("tomorrow"))) {
+                    // Move dinner to next day
+                    for (Activity act : activities) {
+                        if (act.getType().equals("dinner") && act.getDayNumber() == 1) {
+                            act.setDayNumber(2);
+                            act.setStartTime("20:00");
+                            act.setEndTime("22:00");
+                            act.setDescription("[Modified] Moved dinner to day 2");
+                            warnings.add("Dinner moved to Day 2. Please double check conflict reservations.");
+                        }
+                    }
+                    activityRepository.saveAll(activities);
+                }
+                responseText = "I've updated your schedule according to your request! Dinner has been shifted, and I've re-optimized the transit coordinates.";
             }
-            
-            responseText = "I've updated your schedule according to your request! Dinner has been shifted, and I've re-optimized the transit coordinates. Let me know if the updated route looks good.";
         } else {
             // Chat
             responseText = "I am your Concierge assistant. I can update your itinerary, book tickets, check conflicts, or suggest local activities. What would you like to plan?";
@@ -183,7 +224,7 @@ public class ChatOrchestratorService {
                     responseText = result;
                 }
             } catch (Exception e) {
-                // Fallback silently to rule-based responseText
+                // Fallback silently
             }
         }
         
@@ -194,62 +235,175 @@ public class ChatOrchestratorService {
         return response;
     }
 
-    private List<Activity> generateItinerary(Trip trip, int days, String city, List<Map<String, String>> events) {
+    private List<Activity> generateItinerary(Trip trip, int days, String city, List<Map<String, String>> events, String budgetTier) {
         List<Activity> list = new ArrayList<>();
         double[] coords = resolveCoordinates(city);
         
-        String hotelName = city + " Luxury Residency";
+        // Determine Hotel Name & Price multipliers based on budgetTier
+        String hotelPrefix = "Comfort Stay";
+        double priceMult = 1.0;
+        if (budgetTier.equals("budget")) {
+            hotelPrefix = "Backpackers Cozy Lodge";
+            priceMult = 0.4;
+        } else if (budgetTier.equals("luxury")) {
+            hotelPrefix = "Grand Royal Palace & Spa Resort";
+            priceMult = 2.5;
+        } else {
+            hotelPrefix = "Grand Plaza Heights Hotel";
+        }
+        String hotelName = city + " " + hotelPrefix;
+        
         String normalizedCity = city.toLowerCase();
         
         for (int d = 1; d <= days; d++) {
-            // Customize landmarks depending on the town/city name
+            // Customize landmarks depending on the town/city name and budget tier
             String sightName, sightAddr, lunchName, lunchAddr, eventName, eventAddr, dinnerName, dinnerAddr;
+            double sightCost, lunchCost, eventCost, dinnerCost;
             
             if (normalizedCity.contains("rajahmundry")) {
                 sightName = "Godavari Gautami Ghat Riverfront Walk";
                 sightAddr = "Gautami Ghat, Rajahmundry";
-                lunchName = "Sri Kanya Andhra Mess (Bamboo Chicken & Meals)";
+                sightCost = 5.0;
+                
+                if (budgetTier.equals("budget")) {
+                    lunchName = "Sri Kanya Andhra Mess (Local Veg Meals)";
+                    lunchCost = 3.0;
+                    eventName = "Local Godavari Ghat Pushkar Snanam Ghat walk";
+                    eventCost = 0.0;
+                    dinnerName = "Geeta Apsara Local Tiffin Center";
+                    dinnerCost = 2.5;
+                } else if (budgetTier.equals("luxury")) {
+                    lunchName = "Soma Restaurant (Multi-cuisine luxury)";
+                    lunchCost = 28.0;
+                    eventName = "Exclusive Private Godavari Sunset AC Boat Cruise";
+                    eventCost = 65.0;
+                    dinnerName = "La Riviere Shelton Grand Dining";
+                    dinnerCost = 45.0;
+                } else {
+                    lunchName = "Sri Kanya Andhra Mess (Bamboo Chicken & Meals)";
+                    lunchCost = 10.0;
+                    eventName = "Godavari River Boat Cruise to Papikondalu";
+                    eventCost = 25.0;
+                    dinnerName = "Hotel Shelton Rajamahendri Fine Dining";
+                    dinnerCost = 18.0;
+                }
                 lunchAddr = "Kotipalli Bus Stand Road, Rajahmundry";
-                eventName = "Godavari River Boat Cruise to Papikondalu";
                 eventAddr = "Rajahmundry Boat Launching Point";
-                dinnerName = "Hotel Shelton Rajamahendri Fine Dining";
                 dinnerAddr = "Hariharachandra Prasad Road, Rajahmundry";
             } else if (normalizedCity.contains("ravulapalem")) {
                 sightName = "Gautami Bridge View Point & Coconut Groves Walk";
                 sightAddr = "Gautami Bridge Road, Ravulapalem";
-                lunchName = "Sri Rama Vilas Traditional Meals";
+                sightCost = 0.0;
+                
+                if (budgetTier.equals("budget")) {
+                    lunchName = "Sri Rama Vilas Traditional Veg Plate";
+                    lunchCost = 2.0;
+                    eventName = "Ravulapalem Local Clay Crafts Street Bazaar";
+                    eventCost = 0.0;
+                    dinnerName = "Highway Local Dhaba (Roti & Curry)";
+                    dinnerCost = 3.0;
+                } else if (budgetTier.equals("luxury")) {
+                    lunchName = "Konaseema Elite Spice Restaurant";
+                    lunchCost = 15.0;
+                    eventName = "Private Coconut Plantations & Farm Guided Tour";
+                    eventCost = 30.0;
+                    dinnerName = "Sri Sai Swagath Premium AC Dining";
+                    dinnerCost = 20.0;
+                } else {
+                    lunchName = "Sri Rama Vilas Traditional Meals";
+                    lunchCost = 6.0;
+                    eventName = "Ravulapalem Local Clay Crafts & Nursery Bazaar";
+                    eventCost = 10.0;
+                    dinnerName = "Sri Sai Swagath Restaurant";
+                    dinnerCost = 12.0;
+                }
                 lunchAddr = "National Highway 16, Ravulapalem";
-                eventName = "Ravulapalem Local Clay Crafts & Nursery Bazaar";
                 eventAddr = "Main Market Area, Ravulapalem";
-                dinnerName = "Sri Sai Swagath Restaurant";
                 dinnerAddr = "NH-16 Bypass, Ravulapalem";
             } else if (normalizedCity.contains("vizag") || normalizedCity.contains("visakhapatnam")) {
                 sightName = "RK Beach Sunrise Walk & Submarine Museum";
                 sightAddr = "Beach Road, Visakhapatnam";
-                lunchName = "Sai Priya Beach Resort Seafood Bistro";
-                lunchAddr = "Rushikonda, Visakhapatnam";
-                eventName = "Kailasagiri Hilltop Ropeway Adventure Tour";
+                sightCost = 8.0;
+                
+                if (budgetTier.equals("budget")) {
+                    lunchName = "Sea Inn Raju Gari Dhaba (Budget Seafood)";
+                    lunchCost = 4.0;
+                    eventName = "Vuda Park Open-Air Theater Walk";
+                    eventCost = 2.0;
+                    dinnerName = "Alpha Hotel Biryani (Economical)";
+                    dinnerCost = 5.0;
+                } else if (budgetTier.equals("luxury")) {
+                    lunchName = "The Shack (Novotel Beachside Premium)";
+                    lunchCost = 35.0;
+                    eventName = "Private Yacht Cruise charter at Vizag Harbour";
+                    eventCost = 110.0;
+                    dinnerName = "The Gateway Hotel Fine Dine Restaurant";
+                    dinnerCost = 55.0;
+                } else {
+                    lunchName = "Sai Priya Beach Resort Seafood Bistro";
+                    lunchCost = 14.0;
+                    eventName = "Kailasagiri Hilltop Ropeway Adventure Tour";
+                    eventCost = 15.0;
+                    dinnerName = "Hotel Dolphin Restaurant";
+                    dinnerCost = 22.0;
+                }
+                lunchAddr = "Beach Road, Visakhapatnam";
                 eventAddr = "Kailasagiri, Visakhapatnam";
-                dinnerName = "The Gateway Hotel Fine Dine restaurant";
                 dinnerAddr = "Beach Road, Pandurangapuram, Vizag";
             } else if (normalizedCity.contains("hyderabad") || normalizedCity.contains("hyd")) {
                 sightName = "Charminar Heritage Tour & Laad Bazaar Walk";
                 sightAddr = "Old City, Hyderabad";
-                lunchName = "Paradise Biryani House (Authentic Dum Biryani)";
-                lunchAddr = "Secunderabad Main Rd, Hyderabad";
-                eventName = "Golconda Fort Sound & Light Show";
+                sightCost = 10.0;
+                
+                if (budgetTier.equals("budget")) {
+                    lunchName = "Shah Ghouse Cafe (Special Dum Biryani)";
+                    lunchCost = 5.0;
+                    eventName = "NTR Gardens park walkthrough";
+                    eventCost = 2.0;
+                    dinnerName = "Nimrah Cafe (Irani Chai & Osmania Biscuits)";
+                    dinnerCost = 3.0;
+                } else if (budgetTier.equals("luxury")) {
+                    lunchName = "Adaa - Taj Falaknuma Palace (Royal Lunch)";
+                    lunchCost = 95.0;
+                    eventName = "Premium VIP Guided Tour of Golconda & Qutb Shahi Tombs";
+                    eventCost = 50.0;
+                    dinnerName = "Jewel of Nizam - Minar Fine Dining";
+                    dinnerCost = 75.0;
+                } else {
+                    lunchName = "Paradise Biryani House (Dum Biryani & Kebabs)";
+                    lunchCost = 15.0;
+                    eventName = "Golconda Fort Sound & Light Show";
+                    eventCost = 12.0;
+                    dinnerName = "Chutneys Restaurant (Veg Platters)";
+                    dinnerCost = 18.0;
+                }
+                lunchAddr = "Old City, Hyderabad";
                 eventAddr = "Golconda Fort, Hyderabad";
-                dinnerName = "Jewel of Nizam - Minar Fine Dining";
                 dinnerAddr = "Gandipet, Hyderabad";
             } else {
-                // Default generic landmarks with city name interpolation
+                // Default generic landmarks scaled with price multipliers
                 sightName = city + " Heritage Square & Museum";
                 sightAddr = "Central Town Road, " + city;
-                lunchName = city + " Authentic Spice Bistro";
+                sightCost = 15.0 * priceMult;
+                
+                if (budgetTier.equals("budget")) {
+                    lunchName = city + " Local Tiffin & Fast Food Mess";
+                    eventName = city + " Free Public Park walkthrough";
+                    dinnerName = city + " Railway Station Road Diner";
+                } else if (budgetTier.equals("luxury")) {
+                    lunchName = city + " 5-Star Rooftop Bistro";
+                    eventName = city + " VIP Opera / Cultural Event Pass";
+                    dinnerName = city + " Elite Chef Signature Restaurant";
+                } else {
+                    lunchName = city + " Authentic Spice Bistro";
+                    eventName = city + " Local Crafts Bazaar Event";
+                    dinnerName = city + " Grand Residency Restaurant";
+                }
+                lunchCost = 18.0 * priceMult;
+                eventCost = 25.0 * priceMult;
+                dinnerCost = 30.0 * priceMult;
                 lunchAddr = "12 Food Street, " + city;
-                eventName = city + " Local Crafts Bazaar Event";
                 eventAddr = "Exhibition Grounds, " + city;
-                dinnerName = city + " Grand Residency Restaurant";
                 dinnerAddr = "5 Main Plaza, " + city;
             }
             
@@ -285,7 +439,7 @@ public class ChatOrchestratorService {
                 .latitude(coords[0] + 0.004)
                 .longitude(coords[1] - 0.003)
                 .address(sightAddr)
-                .cost(20.0)
+                .cost(Math.round(sightCost * 100.0) / 100.0)
                 .description("Explore local monuments and guide tour.")
                 .build());
                 
@@ -300,7 +454,7 @@ public class ChatOrchestratorService {
                 .latitude(coords[0] + 0.002)
                 .longitude(coords[1] + 0.001)
                 .address(lunchAddr)
-                .cost(25.0)
+                .cost(Math.round(lunchCost * 100.0) / 100.0)
                 .description("Enjoy authentic regional recipes.")
                 .build());
                 
@@ -315,7 +469,7 @@ public class ChatOrchestratorService {
                 .latitude(coords[0] - 0.006)
                 .longitude(coords[1] + 0.003)
                 .address(eventAddr)
-                .cost(35.0)
+                .cost(Math.round(eventCost * 100.0) / 100.0)
                 .description("Explore cultural events and exhibits.")
                 .build());
 
@@ -330,7 +484,7 @@ public class ChatOrchestratorService {
                 .latitude(coords[0] - 0.001)
                 .longitude(coords[1] - 0.002)
                 .address(dinnerAddr)
-                .cost(40.0)
+                .cost(Math.round(dinnerCost * 100.0) / 100.0)
                 .description("Fine table dinner service.")
                 .build());
 
