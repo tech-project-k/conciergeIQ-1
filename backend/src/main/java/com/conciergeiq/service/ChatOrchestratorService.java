@@ -28,6 +28,9 @@ public class ChatOrchestratorService {
     private BookingRepository bookingRepository;
 
     @Autowired
+    private PreferenceRepository preferenceRepository;
+
+    @Autowired
     private VectorSearchService vectorSearchService;
 
     @Value("${openai.api.key}")
