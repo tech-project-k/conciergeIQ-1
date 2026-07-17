@@ -1,0 +1,43 @@
+@import "swiper/css";
+@import "swiper/css/navigation";
+@import "swiper/css/pagination";
+@import "swiper/css/autoplay";
+
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    background:#081B3D;
+    color:white;
+}
+
+section{
+    padding:90px 0;
+    position:relative;
+}
+
+.section-dark{
+    background:#081B3D;
+}
+
+.section-light{
+    background:linear-gradient(180deg,#0E2A55,#102F61);
+}
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    margin:0;
+    padding:0;
+    overflow-x:hidden;
+    font-family:'Poppins',sans-serif;
+    background:#f5f7fb;
+}
+
+section{
+    position:relative;
+    padding:90px 0;
+}
