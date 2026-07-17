@@ -6,10 +6,10 @@ from typing import Any
 if sys.version_info >= (3, 12):
     from typing import ForwardRef
     original_evaluate = ForwardRef._evaluate
-    def patched_evaluate(self, globalns, localns, recursive_guard=None):
-        if recursive_guard is None:
-            recursive_guard = set()
-        return original_evaluate(self, globalns, localns, recursive_guard=recursive_guard)
+    def patched_evaluate(self, globalns, localns, *args, **kwargs):
+        if len(args) == 1 and isinstance(args[0], (set, frozenset)) and "recursive_guard" not in kwargs:
+            return original_evaluate(self, globalns, localns, None, recursive_guard=args[0])
+        return original_evaluate(self, globalns, localns, *args, **kwargs)
     ForwardRef._evaluate = patched_evaluate
 
 from fastapi import FastAPI
