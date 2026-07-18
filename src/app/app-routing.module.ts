@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import { MapPageComponent } from './pages/map-page/map-page.component';
+import { AiChatComponent } from './components/ai-chat/ai-chat.component';
 const routes: Routes = [
 
   {
@@ -19,8 +20,11 @@ const routes: Routes = [
   {
     path: 'map',
     component: MapPageComponent
+  },
+  {
+    path: 'ai-chat',
+    component: AiChatComponent
   }
-
 ];
 
 @NgModule({

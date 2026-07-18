@@ -17,5 +17,8 @@ export class LoginComponent {
     this.router.navigate(['/']);
 
   }
+  goHome() {
+  this.router.navigate(['/']);
+}
 
 }

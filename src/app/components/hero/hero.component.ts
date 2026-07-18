@@ -30,4 +30,10 @@ export class HeroComponent implements AfterViewInit {
   goToMap() {
     this.router.navigate(['/map']);
   }
+  goToAI() {
+  this.router.navigate(['/ai-chat']);
+}
+goHome() {
+  this.router.navigate(['/']);
+}
 }
