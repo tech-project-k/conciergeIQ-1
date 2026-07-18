@@ -5,37 +5,36 @@
     </div>
 
     <ul class="nav-links">
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Hotels</a></li>
-        <li><a href="#">Destinations</a></li>
-        <li><a href="#">Restaurants</a></li>
-        <li><a href="#">Events</a></li>
-        <li><a href="#">Reviews</a></li>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#search">Search</a></li>
+        <li><a href="#hotels">Hotels</a></li>
+        <li><a href="#destinations">Destinations</a></li>
+        <li><a href="#events">Events</a></li>
+        <li><a href="#restaurants">Restaurants</a></li>
+        <li><a href="#reviews">Reviews</a></li>
+        <li><a href="#contact">Contact</a></li>
     </ul>
 
-    <button class="login-btn">Login</button>
 
-    <!-- Mobile Menu Icon -->
+  
+
+    <!-- Mobile Menu -->
     <div class="menu-icon" (click)="toggleMenu()">
         <i class="bi bi-list"></i>
     </div>
 
 </nav>
 
-<!-- Mobile Menu -->
 <div class="mobile-menu" [class.active]="menuOpen">
 
-    <div class="close-btn" (click)="closeMenu()">
-        <i class="bi bi-x-lg"></i>
-    </div>
-
-    <a href="#" (click)="closeMenu()">Home</a>
-    <a href="#" (click)="closeMenu()">Hotels</a>
-    <a href="#" (click)="closeMenu()">Destinations</a>
-    <a href="#" (click)="closeMenu()">Restaurants</a>
-    <a href="#" (click)="closeMenu()">Events</a>
-    <a href="#" (click)="closeMenu()">Reviews</a>
-
+    <a href="#home" (click)="closeMenu()">Home</a>
+    <a href="#search" (click)="closeMenu()">Search</a>
+    <a href="#hotels" (click)="closeMenu()">Hotels</a>
+    <a href="#destinations" (click)="closeMenu()">Destinations</a>
+    <a href="#events" (click)="closeMenu()">Events</a>
+    <a href="#restaurants" (click)="closeMenu()">Restaurants</a>
+    <a href="#reviews" (click)="closeMenu()">Reviews</a>
+    <a href="#contact" (click)="closeMenu()">Contact</a>
     <button class="mobile-login">Login</button>
 
 </div>

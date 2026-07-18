@@ -1,4 +1,5 @@
 import { AfterViewInit, Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-hero',
@@ -7,19 +8,26 @@ import { AfterViewInit, Component } from '@angular/core';
 })
 export class HeroComponent implements AfterViewInit {
 
-  ngAfterViewInit(): void {
+  constructor(private router: Router) {}
 
+  ngAfterViewInit(): void {
     const video = document.getElementById('bgVideo') as HTMLVideoElement;
 
-    video.muted = true;
-    video.defaultMuted = true;
+    if (video) {
+      video.muted = true;
+      video.defaultMuted = true;
 
-    video.play().then(() => {
-      console.log('Video Playing');
-    }).catch((err) => {
-      console.log(err);
-    });
-
+      video.play()
+        .then(() => console.log('Video Playing'))
+        .catch(err => console.log(err));
+    }
   }
 
+  goToLogin() {
+    this.router.navigate(['/login']);
+  }
+
+  goToMap() {
+    this.router.navigate(['/map']);
+  }
 }
