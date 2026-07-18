@@ -130,15 +130,15 @@ def recommend_and_booking_node(state: AgentState) -> AgentState:
 # Compile StateGraph workflow
 workflow = StateGraph(AgentState)
 workflow.add_node("intent", extract_intent_node)
-workflow.add_node("weather", weather_check_node)
+workflow.add_node("check_weather", weather_check_node)
 workflow.add_node("retrieve", retrieve_sights_node)
 workflow.add_node("planner", planner_node)
 workflow.add_node("validate", format_and_validate_node)
 workflow.add_node("recommend_book", recommend_and_booking_node)
 
 workflow.set_entry_point("intent")
-workflow.add_edge("intent", "weather")
-workflow.add_edge("weather", "retrieve")
+workflow.add_edge("intent", "check_weather")
+workflow.add_edge("check_weather", "retrieve")
 workflow.add_edge("retrieve", "planner")
 workflow.add_edge("planner", "validate")
 workflow.add_edge("validate", "recommend_book")
