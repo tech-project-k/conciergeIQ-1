@@ -1,0 +1,34 @@
+# =====================================================================
+# Why it exists: 
+# This file lists all the Python external dependencies required to run 
+# the ConciergeIQ GenAI Travel Concierge Engine.
+#
+# What it does:
+# Allows developers to install all required libraries in a single command
+# using `pip install -r requirements.txt`.
+#
+# How it works:
+# Standard pip requirements listing package names with pinned versions for 
+# production stability and reproducibility.
+#
+# How it integrates:
+# Used by Python's package installer (pip) to construct the local virtual
+# environment for running app.py and backend services.
+# =====================================================================
+
+fastapi==0.111.0
+uvicorn[standard]==0.30.1
+pydantic==2.7.1
+pydantic-settings==2.2.1
+requests==2.32.2
+python-dotenv==1.0.1
+langchain==0.2.1
+langchain-core==0.2.8
+langchain-google-genai==1.0.6
+googlemaps==4.10.0
+openmeteo-requests==1.3.0
+pandas==2.2.2
+requests-cache==1.2.0
+retry-requests==2.0.0
+langgraph==0.0.55
+
