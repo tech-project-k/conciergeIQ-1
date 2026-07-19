@@ -21,6 +21,7 @@ import { LoginComponent } from './components/login/login.component';
 import { AiChatComponent } from './components/ai-chat/ai-chat.component';
 import { PreloaderComponent } from './components/preloader/preloader.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { ProfileComponent } from './components/profile/profile.component';
 
 import { HomeComponent } from './pages/home/home.component';
 import { MapPageComponent } from './pages/map-page/map-page.component';
@@ -43,6 +44,7 @@ import { MapPageComponent } from './pages/map-page/map-page.component';
     AiChatComponent,
     PreloaderComponent,
     DashboardComponent,
+    ProfileComponent,
 
     HomeComponent,
     MapPageComponent

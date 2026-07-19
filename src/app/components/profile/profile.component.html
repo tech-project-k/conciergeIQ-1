@@ -1,0 +1,39 @@
+<section class="profile-page">
+  <div class="profile-card">
+    <div class="profile-header">
+      <div class="avatar">MC</div>
+      <div>
+        <h2>{{ user.name }}</h2>
+        <p>{{ user.status }}</p>
+      </div>
+    </div>
+
+    <div class="profile-info">
+      <div>
+        <span>Email</span>
+        <strong>{{ user.email }}</strong>
+      </div>
+      <div>
+        <span>Location</span>
+        <strong>{{ user.location }}</strong>
+      </div>
+    </div>
+
+    <div class="trip-section">
+      <div class="section-title">
+        <h3>Recent Trips</h3>
+        <button type="button">View All</button>
+      </div>
+
+      <div class="trip-list">
+        <div class="trip-item" *ngFor="let trip of trips">
+          <div>
+            <h4>{{ trip.title }}</h4>
+            <p>{{ trip.date }}</p>
+          </div>
+          <span>{{ trip.tag }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

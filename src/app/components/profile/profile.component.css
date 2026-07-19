@@ -1,0 +1,148 @@
+.profile-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 28px;
+  background: linear-gradient(135deg, #f6f9ff, #eef4ff);
+}
+
+.profile-card {
+  width: min(760px, 100%);
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 20px 45px rgba(12, 42, 72, 0.12);
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #0f4c81, #1e88e5);
+  color: white;
+  font-weight: 700;
+  font-size: 22px;
+}
+
+.profile-header h2 {
+  margin: 0;
+  color: #10314f;
+}
+
+.profile-header p {
+  margin: 4px 0 0;
+  color: #5f7490;
+}
+
+.profile-info {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.profile-info > div {
+  background: #f5f8ff;
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+
+.profile-info span {
+  display: block;
+  color: #6f7d92;
+  font-size: 12px;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.profile-info strong {
+  color: #10314f;
+}
+
+.trip-section {
+  border-top: 1px solid #e7ecf3;
+  padding-top: 20px;
+}
+
+.section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.section-title h3 {
+  margin: 0;
+  color: #10314f;
+}
+
+.section-title button {
+  border: none;
+  background: #0f4c81;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.trip-list {
+  display: grid;
+  gap: 10px;
+}
+
+.trip-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  background: #f9fbff;
+  border-radius: 12px;
+}
+
+.trip-item h4 {
+  margin: 0 0 4px;
+  color: #10314f;
+}
+
+.trip-item p {
+  margin: 0;
+  color: #6f7d92;
+  font-size: 13px;
+}
+
+.trip-item span {
+  color: #0f4c81;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+@media (max-width: 768px) {
+  .profile-page {
+    padding: 16px;
+  }
+
+  .profile-card {
+    padding: 22px 18px;
+  }
+
+  .profile-info {
+    grid-template-columns: 1fr;
+  }
+
+  .trip-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+}

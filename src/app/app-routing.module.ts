@@ -6,6 +6,7 @@ import { LoginComponent } from './components/login/login.component';
 import { MapPageComponent } from './pages/map-page/map-page.component';
 import { AiChatComponent } from './components/ai-chat/ai-chat.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { ProfileComponent } from './components/profile/profile.component';
 
 const routes: Routes = [
 
@@ -30,6 +31,10 @@ const routes: Routes = [
   {
     path: 'dashboard',
     component: DashboardComponent
+  },
+  {
+    path: 'profile',
+    component: ProfileComponent
   }
 ];
 

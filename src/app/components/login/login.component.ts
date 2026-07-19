@@ -10,15 +10,11 @@ export class LoginComponent {
 
   constructor(private router: Router) {}
 
-  login() {
-
-    alert('Login Successful!');
-
-    this.router.navigate(['/']);
-
+  login(): void {
+    this.router.navigate(['/profile']);
   }
-  goHome() {
-  this.router.navigate(['/']);
-}
 
+  goHome(): void {
+    this.router.navigate(['/']);
+  }
 }
