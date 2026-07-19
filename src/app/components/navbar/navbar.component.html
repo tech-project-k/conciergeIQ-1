@@ -1,27 +1,23 @@
 <nav class="navbar" [class.scrolled]="isScrolled">
 
-    <div class="logo">
+    <a class="logo" routerLink="/" (click)="closeMenu()">
         <img src="assets/images/logo.png" alt="ConciergeIQ logo">
         <h2>ConciergeIQ</h2>
-    </div>
+    </a>
 
     <ul class="nav-links">
-        <li><a href="#home">Home</a></li>
-        <li><a href="#search">Search</a></li>
-        <li><a href="#hotels">Hotels</a></li>
-        <li><a href="#destinations">Destinations</a></li>
-        <li><a href="#events">Events</a></li>
-        <li><a href="#restaurants">Restaurants</a></li>
-        <li><a href="#reviews">Reviews</a></li>
-        <li><a href="#contact">Contact</a></li>
+        <li><a href="#home" (click)="closeMenu()">Home</a></li>
+        <li><a href="#search" (click)="closeMenu()">Search</a></li>
+        <li><a href="#hotels" (click)="closeMenu()">Hotels</a></li>
+        <li><a href="#destinations" (click)="closeMenu()">Destinations</a></li>
+        <li><a href="#events" (click)="closeMenu()">Events</a></li>
+        <li><a href="#restaurants" (click)="closeMenu()">Restaurants</a></li>
+        <li><a href="#reviews" (click)="closeMenu()">Reviews</a></li>
+        <li><a href="#contact" (click)="closeMenu()">Contact</a></li>
     </ul>
 
-
-  
-
-    <!-- Mobile Menu -->
-    <div class="menu-icon" (click)="toggleMenu()">
-        <i class="bi bi-list"></i>
+    <div class="menu-icon" (click)="toggleMenu()" aria-label="Toggle navigation">
+        <i class="bi" [class.bi-list]="!menuOpen" [class.bi-x-lg]="menuOpen"></i>
     </div>
 
 </nav>
@@ -36,6 +32,6 @@
     <a href="#restaurants" (click)="closeMenu()">Restaurants</a>
     <a href="#reviews" (click)="closeMenu()">Reviews</a>
     <a href="#contact" (click)="closeMenu()">Contact</a>
-    <button class="mobile-login">Login</button>
+    <a class="mobile-login" routerLink="/login" (click)="closeMenu()">Login</a>
 
 </div>

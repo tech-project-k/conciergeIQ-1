@@ -68,15 +68,43 @@ section{
 @media(max-width:768px){
 
 section{
-    padding:70px 20px;
+    padding:64px 16px;
+}
+
+.section-title{
+    margin-bottom:28px;
+    padding:0;
 }
 
 .section-title h2{
-    font-size:32px;
+    font-size:24px;
+    line-height:1.2;
 }
 
 .section-title p{
-    font-size:15px;
+    font-size:14px;
+}
+
+.hero-buttons{
+    flex-direction:column;
+    gap:10px;
+    width:100%;
+    align-items:center;
+}
+
+.hero-buttons button{
+    width:100%;
+    max-width:260px;
+}
+
+.card,
+.destination-card,
+.hotel-card,
+.restaurant-card,
+.event-card,
+.review-card{
+    width:100%;
+    margin:0 auto;
 }
 
 }

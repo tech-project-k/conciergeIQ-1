@@ -1,111 +1,69 @@
 .preloader{
-
-    position:fixed;
-
-    inset:0;
-
-    background:#041E42;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    z-index:999999;
-
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #041e42 0%, #0b2f5a 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999999;
+    padding: 20px;
 }
 
 .loader-box{
-
-    text-align:center;
-
+    text-align: center;
+    width: min(100%, 420px);
 }
 
 .loader-box h1{
-
-    color:white;
-
-    font-size:70px;
-
-    letter-spacing:12px;
-
-    animation:glow 1.5s infinite alternate;
-
+    color: white;
+    font-size: clamp(28px, 6vw, 54px);
+    letter-spacing: 0.2em;
+    line-height: 1.1;
+    animation: glow 1.5s infinite alternate;
+    margin: 0;
 }
 
 .loader-box p{
-
-    color:#d8e8ff;
-
-    margin-top:15px;
-
-    font-size:18px;
-
-    letter-spacing:3px;
-
+    color: #d8e8ff;
+    margin-top: 12px;
+    font-size: clamp(13px, 2.5vw, 16px);
+    letter-spacing: 0.15em;
 }
 
 .loader-line{
-
-    width:340px;
-
-    height:5px;
-
-    margin:40px auto;
-
-    background:#20497f;
-
-    overflow:hidden;
-
-    border-radius:20px;
-
+    width: min(100%, 280px);
+    height: 5px;
+    margin: 24px auto;
+    background: #20497f;
+    overflow: hidden;
+    border-radius: 20px;
 }
 
 .loader-fill{
-
-    width:0;
-
-    height:100%;
-
-    background:white;
-
-    animation:loading 2.5s linear forwards;
-
+    width: 0;
+    height: 100%;
+    background: white;
+    animation: loading 2.5s linear forwards;
 }
 
 .loader-box span{
-
-    color:white;
-
-    letter-spacing:4px;
-
+    color: white;
+    letter-spacing: 0.2em;
+    font-size: 14px;
 }
 
-@keyframes loading{
-
-    from{
-        width:0;
-    }
-
-    to{
-        width:100%;
-    }
-
+@keyframes loading {
+    from { width: 0; }
+    to { width: 100%; }
 }
 
-@keyframes glow{
+@keyframes glow {
+    from { text-shadow: 0 0 8px white; }
+    to { text-shadow: 0 0 24px #7cc6ff; }
+}
 
-    from{
-
-        text-shadow:0 0 10px white;
-
-    }
-
-    to{
-
-        text-shadow:0 0 35px #7cc6ff;
-
-    }
-
+@media (max-width: 480px) {
+    .preloader { padding: 16px; }
+    .loader-box p { margin-top: 8px; }
+    .loader-line { margin: 18px auto; }
 }

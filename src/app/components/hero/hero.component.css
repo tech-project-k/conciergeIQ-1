@@ -52,26 +52,45 @@
 @media(max-width:768px){
 
 .hero{
-    height:100vh;
+    height:100svh;
+    min-height:100vh;
 }
 
 .hero-content{
-    padding:0 20px;
+    padding:0 16px;
+    justify-content:center;
 }
 
 .hero-content h2{
-    font-size:18px;
-    letter-spacing:5px;
+    font-size:16px;
+    letter-spacing:4px;
+    margin-bottom:12px;
 }
 
 .hero-content h1{
-    font-size:46px;
-    line-height:55px;
+    font-size:36px;
+    line-height:42px;
+    margin-bottom:12px;
 }
 
 .hero-content p{
-    font-size:16px;
-    line-height:28px;
+    font-size:15px;
+    line-height:24px;
+    margin-bottom:8px;
+}
+
+.hero-buttons{
+    margin-top:20px;
+    width:100%;
+}
+
+.login-btn,
+.map-btn,
+.ai-btn{
+    width:100%;
+    max-width:260px;
+    padding:12px 18px;
+    font-size:15px;
 }
 
 }
@@ -119,6 +138,24 @@
     transform:translateY(-4px);
 }
 
+.ai-btn{
+    padding:15px 34px;
+    border:none;
+    border-radius:40px;
+    background:linear-gradient(135deg, #ff8a00, #f1b44c);
+    color:#fff;
+    font-size:17px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.3s;
+    box-shadow:0 8px 25px rgba(241,180,76,.35);
+}
+
+.ai-btn:hover{
+    background:linear-gradient(135deg, #ff9f1c, #ffd166);
+    transform:translateY(-4px);
+}
+
 .hero-buttons i{
     margin-right:8px;
 }
@@ -131,7 +168,8 @@
 }
 
 .login-btn,
-.map-btn{
+.map-btn,
+.ai-btn{
     width:220px;
 }
 
