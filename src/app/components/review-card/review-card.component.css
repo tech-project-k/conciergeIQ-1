@@ -1,0 +1,172 @@
+.reviews{
+    padding:90px 5%;
+
+    background:
+    linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.55)),
+    url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80");
+
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+    background-attachment:fixed;
+}
+
+/* Heading */
+
+.reviews .section-title{
+    text-align:center;
+    margin-bottom:45px;
+}
+
+.reviews .section-title span{
+    color:#FFD54F;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    font-weight:600;
+}
+
+.reviews .section-title h2{
+    color:#fff;
+    font-size:46px;
+    margin:10px 0;
+}
+
+.reviews .section-title p{
+    color:#fff;
+    font-size:18px;
+}
+
+/* Scroll */
+
+.review-slider{
+
+    width:100%;
+
+    overflow-x:auto;
+    overflow-y:hidden;
+
+    scroll-behavior:smooth;
+
+    padding:20px 0;
+
+    cursor:grab;
+}
+
+.review-slider:active{
+    cursor:grabbing;
+}
+
+.review-slider::-webkit-scrollbar{
+    height:10px;
+}
+
+.review-slider::-webkit-scrollbar-thumb{
+    background:#FFD54F;
+    border-radius:20px;
+}
+
+.review-slider::-webkit-scrollbar-track{
+    background:rgba(255,255,255,.15);
+}
+
+/* Cards */
+
+.review-container{
+
+    display:flex;
+
+    gap:30px;
+
+    flex-wrap:nowrap;
+
+    width:max-content;
+
+    padding-right:30px;
+}
+
+.review-card{
+
+    width:360px;
+
+    flex:0 0 auto;
+
+    background:#fff;
+
+    border-radius:24px;
+
+    padding:30px;
+
+    text-align:center;
+
+    box-shadow:0 15px 35px rgba(0,0,0,.15);
+
+    transition:.35s;
+}
+
+.review-card:hover{
+
+    transform:translateY(-10px);
+
+    box-shadow:0 25px 50px rgba(0,0,0,.25);
+}
+
+.review-card img{
+
+    width:110px;
+    height:110px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    border:5px solid #2563eb;
+
+    margin-bottom:20px;
+}
+
+.review-card h3{
+
+    color:#111827;
+
+    margin-bottom:8px;
+}
+
+.review-card span{
+
+    display:block;
+
+    color:#64748b;
+
+    margin-bottom:15px;
+}
+
+.stars{
+
+    color:#FFD54F;
+
+    font-size:22px;
+
+    margin-bottom:15px;
+}
+
+.review-card p{
+
+    color:#475569;
+
+    line-height:28px;
+}
+
+/* Mobile */
+
+@media(max-width:768px){
+
+    .review-card{
+
+        width:300px;
+    }
+
+    .reviews .section-title h2{
+
+        font-size:34px;
+    }
+}

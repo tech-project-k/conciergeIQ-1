@@ -1,0 +1,82 @@
+@import "swiper/css";
+@import "swiper/css/navigation";
+@import "swiper/css/pagination";
+@import "swiper/css/autoplay";
+@import "bootstrap-icons/font/bootstrap-icons.css";
+
+/* Global */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    margin:0;
+    padding:0;
+    overflow-x:hidden;
+    font-family:'Poppins',sans-serif;
+    background:#f5f7fb;
+}
+
+/* All Sections */
+
+section{
+    width:100%;
+    position:relative;
+    padding:100px 5%;
+    margin:0;
+}
+
+/* Common Heading */
+
+.section-title{
+    text-align:center;
+    margin-bottom:60px;
+    padding: 0 20px;
+}
+
+.section-title span{
+    display:block;
+    color:#2563eb;
+    font-weight:600;
+    letter-spacing:2px;
+    margin-bottom:12px;
+}
+
+.section-title h2{
+    font-size:42px;
+    color:#0f172a;
+    margin-bottom:15px;
+}
+
+.section-title p{
+    font-size:18px;
+    color:#64748b;
+    max-width:700px;
+    margin:auto;
+    line-height:1.7;
+}
+
+/* Mobile */
+
+@media(max-width:768px){
+
+section{
+    padding:70px 20px;
+}
+
+.section-title h2{
+    font-size:32px;
+}
+
+.section-title p{
+    font-size:15px;
+}
+
+}

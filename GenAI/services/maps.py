@@ -82,7 +82,7 @@ class MapsService:
         cache_service.set(cache_key, result)
         return result
 
-    def geocode(self, location_name: str) -> Optional[tuple[float, float]]:
+    def geocode(self, location_name: str) -> Optional[Tuple[float, float]]:
         """Resolve any city or place name to (latitude, longitude) coordinates."""
         cache_key = f"geocode_{location_name.lower().strip()}"
         cached = cache_service.get(cache_key)

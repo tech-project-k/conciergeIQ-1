@@ -1,0 +1,40 @@
+<nav class="navbar" [class.scrolled]="isScrolled">
+
+    <div class="logo">
+        <h2>ConciergeIQ</h2>
+    </div>
+
+    <ul class="nav-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#search">Search</a></li>
+        <li><a href="#hotels">Hotels</a></li>
+        <li><a href="#destinations">Destinations</a></li>
+        <li><a href="#events">Events</a></li>
+        <li><a href="#restaurants">Restaurants</a></li>
+        <li><a href="#reviews">Reviews</a></li>
+        <li><a href="#contact">Contact</a></li>
+    </ul>
+
+
+  
+
+    <!-- Mobile Menu -->
+    <div class="menu-icon" (click)="toggleMenu()">
+        <i class="bi bi-list"></i>
+    </div>
+
+</nav>
+
+<div class="mobile-menu" [class.active]="menuOpen">
+
+    <a href="#home" (click)="closeMenu()">Home</a>
+    <a href="#search" (click)="closeMenu()">Search</a>
+    <a href="#hotels" (click)="closeMenu()">Hotels</a>
+    <a href="#destinations" (click)="closeMenu()">Destinations</a>
+    <a href="#events" (click)="closeMenu()">Events</a>
+    <a href="#restaurants" (click)="closeMenu()">Restaurants</a>
+    <a href="#reviews" (click)="closeMenu()">Reviews</a>
+    <a href="#contact" (click)="closeMenu()">Contact</a>
+    <button class="mobile-login">Login</button>
+
+</div>

@@ -262,7 +262,7 @@ class TravelAgent:
                     success=True,
                     session_id=session_id,
                     response=resp_msg,
-                    message=resp_msg
+                    message=resp_msg,
                 )
             
             # Build location context string

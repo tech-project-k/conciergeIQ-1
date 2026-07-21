@@ -89,7 +89,6 @@ class VectorStore:
             {"city": "Ravulapalem", "type": "lunch", "name": "Sri Rama Vilas Traditional Meals", "address": "National Highway 16, Ravulapalem", "cost": 150.0, "lat": 16.7400, "lon": 81.8480, "category": "Food/Local"},
             {"city": "Ravulapalem", "type": "dinner", "name": "Sri Sai Swagath Premium AC Restaurant", "address": "NH-16 Bypass, Ravulapalem", "cost": 400.0, "lat": 16.7430, "lon": 81.8520, "category": "Food/Standard"},
             {"city": "Ravulapalem", "type": "hotel", "name": "Ravulapalem Backpacker Cozy Lodge", "address": "1 Luxury Road, Ravulapalem", "cost": 1200.0, "lat": 16.7410, "lon": 81.8497, "category": "Accommodation/Hotel"}
-
         ]
         for entry in raw_catalog:
             desc = f"{entry['name']} located in {entry['city']} is a {entry['type']} ({entry['category']}) with price {entry['cost']} and address: {entry['address']}."
@@ -137,7 +136,7 @@ class VectorStore:
             {"city": city_title, "type": "lunch", "name": f"{city_title} Traditional Flavors Restaurant", "address": f"Market Square, {city_title}", "cost": 350.0, "lat": lat - 0.002, "lon": lon - 0.002, "category": "Food/Local"},
             {"city": city_title, "type": "dinner", "name": f"{city_title} Premium Rooftop Dining", "address": f"High Street, {city_title}", "cost": 1200.0, "lat": lat + 0.003, "lon": lon + 0.001, "category": "Food/Luxury"},
             {"city": city_title, "type": "hotel", "name": f"{city_title} Grand Comfort Stay Hotel", "address": f"Station Road, {city_title}", "cost": 2500.0, "lat": lat, "lon": lon, "category": "Accommodation/Hotel"},
-            {"city": "city_title", "type": "event", "name": f"{city_title} Cultural Show & Shopping Market", "address": f"Mall Road, {city_title}", "cost": 200.0, "lat": lat - 0.005, "lon": lon + 0.006, "category": "Entertainment/Shopping"}
+            {"city": city_title, "type": "event", "name": f"{city_title} Cultural Show & Shopping Market", "address": f"Mall Road, {city_title}", "cost": 200.0, "lat": lat - 0.005, "lon": lon + 0.006, "category": "Entertainment/Shopping"}
         ]
         
         for entry in dynamic_spots:
